@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>风场测试</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../lib/ol/ol.css" type="text/css">
+    <script src="../lib/ol/ol.js"></script>
+    <script  src="https://code.jquery.com/jquery-3.4.1.min.js"  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <style>
+        body,html{
+            width:100%;
+            margin:0;
+            padding:0;
+            height: 100%;
+            position:absolute;
+        }
+        .map{
+            width:100%;
+            height:100%;
+            position:absolute;
+        }
+        .save{
+            position: absolute;
+            left: 200px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" style="position: absolute; z-index: 10; pointer-events: none;left: 0;top:0;bottom: 0;right: 0;"></canvas>
+    <div class="map" id="map"></div>
+    <!-- <script src="./js/wind.js"></script> -->
+    <script src="./js/windy.js"></script>
+    <script>
+        var asideVue={
+            projection: "EPSG:3857"
+        }
+        var DARK_BLUE = new ol.source.XYZ({
+            url: "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}"
+        });
+
+        var basicMap = new ol.layer.Tile({source: DARK_BLUE});
+        var projection = "EPSG:3857"; // "EPSG:3857"; //"EPSG:10035";
+        var center = new ol.proj.fromLonLat([110, 24], projection);
+        // var mapExtent = ol.proj.transformExtent([-180, -85, 180, 85],'EPSG:4326', projection);
+        var monitorMap = new ol.Map({
+            controls: ol.control.defaults({
+                attributionOptions:
+                    ({
+                        collapsible: false
+                    })
+            }),
+            layers:[basicMap],
+            target: 'map',
+            view: new ol.View({
+                projection: projection,
+                center: center,
+                // extent: mapExtent,
+                zoom: 4,
+                maxZoom: 15,
+                minZoom: 3,
+            })
+        });
+        // var display = new MotionDisplay(document.getElementById('canvas'), new VectorField([[]], -179.5, 89.5, 179.5, -89.5));
+
+        $.ajax({
+            url:"./gfs.json",
+            success:function(data){
+                // console.log(data);
+                // var field = VectorField.read(data);
+                // console.log(field);
+                // var display=new MotionDisplay(document.getElementById('canvas'), field);
+                // console.log(display);
+                // display.start();
+                // var canvas=monitorMap.getTargetElement().querySelector(".ol-unselectable");
+                console.log(monitorMap);
+                var canv=null;
+                var isFirst=true;//是否第一次加载该canvas图层
+                var windyLayer=null;
+                var canvasLayer = new ol.layer.Image({
+                    source: new ol.source.ImageCanvas({
+                        canvasFunction: (extent, resolution, pixelRatio, size, projection) => {
+                            if(isFirst)//这里必须要做一个判断，每次的范围变动都会引起重绘，从而触发该回调函数，不判断的话，将会导致canvas无法被绘制到地图上，出现闪现的情况
+			                {
+			
+                                const [width, height] = size;
+                                extent = new ol.proj.transformExtent(extent,asideVue.projection, 'EPSG:4326' );
+                                var canvas=document.createElement('canvas');
+                                canvas.width=size[0];
+                                canvas.height=size[1];
+                                    
+                                var context = canvas.getContext('2d');
+                                
+                                // context.fillStyle = "blue";
+                                // context.fillRect(0,0,1000,1000);
+                                windyLayer = new Windy({ canvas, data: data });
+                               
+
+                                return canvas;
+                            }
+                        },
+                        projection: 'EPSG:3857',
+                        ratio: 1
+                    }),
+                    zIndex:10
+                });
+                console.log(canvasLayer);
+                monitorMap.addLayer(canvasLayer);
+                monitorMap.render();
+                console.log(windyLayer);
+                if(windyLayer){
+                    windyLayer.start(
+                        [[0,0],[width, height]],
+                        width,
+                        height,
+                        [[extent[0], extent[1]],[extent[2], extent[3]]]
+                    );
+                }
+               
+
+                // // // 向map添加图层
+                // var mapSize = monitorMap.getSize();
+                // var width = mapSize[0];
+                // var height = mapSize[1];
+                // canv=document.createElement("canvas");
+                // canvas.width = width;
+                // canvas.height = height;
+                // // var windy = new Windy({ canvas:canv, data: data });
+                // var windy = new Windy({ canvas:document.getElementById('canvas'), data: data });
+
+                // // var mapSize = monitorMap.getSize();
+                // // var width = mapSize[0];
+                // // var height = mapSize[1];
+                // var extent = monitorMap.getView().calculateExtent(mapSize);
+                // extent = new ol.proj.transformExtent(extent,asideVue.projection, 'EPSG:4326' );
+                // console.log(mapSize);
+                // console.log("dsdf");
+                // windy.start(
+                //     [[0,0],[width, height]],
+                //     width,
+                //     height,
+                //     [[extent[0], extent[1]],[extent[2], extent[3]]]
+                // );
+                // console.log(extent);
+                // console.log(windy);
+            },
+            error:function(err){
+                console.log(err);
+            }
+        })
+    </script>
+    <!-- <script src="./js/wind2.js"></script> -->
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <script  src="https://code.jquery.com/jquery-3.4.1.min.js"
+             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="  crossorigin="anonymous"></script>
+    <script type="text/javascript" src="lib/avsc-js.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/pbf@3.0.5/dist/pbf.js"></script>
+</head>
+<body>
+    <script>
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', './avro/users.avro', true);
+        xhr.responseType = 'arraybuffer';
+
+        xhr.onload = function(e) {
+            if (this.status == 200) {
+                // get binary data as a response
+                var blob = this.response;
+                console.log(blob);
+                var view=new Uint8Array(blob);
+                console.log(view);
+                console.log(String.fromCharCode(view[0]));
+                console.log(String.fromCharCode(view[1]));
+                console.log(String.fromCharCode(view[2]));
+                console.log(String.fromCharCode(222));
+
+                var pbf = new Pbf(new Uint8Array(this.response));
+                console.log(pbf);
+
+                var str = pbf.readVarint();
+                str = pbf.readVarint();
+                str = pbf.readVarint();
+                str = pbf.readVarint();
+
+                console.log(pbf.readSFixed64())
+
+                console.log(pbf.readString());
+            }
+        };
+
+        xhr.send();
+
+        console.log(avsc);
+        // $.ajax({
+        //     url:"./avro/users.avro",
+        //     success:function (data) {
+        //         console.log(atob)
+        //         console.log(data);
+        //         console.log(data.length)
+        //         console.log(data[290]);
+        //         var a=new ArrayBuffer(data);
+        //         console.log(a);
+        //         console.log(ArrayBuffer.isView(data));
+        //         console.log(new Uint8Array(data || 0));
+        //         // var type=avsc.parse({
+        //         //     "type":"record",
+        //         //     "name":"User",
+        //         //     "namespace":"com.proheng",
+        //         //     "fields":[
+        //         //         {"name":"name","type":"string"},
+        //         //         {"name":"favorite_number","type":["int","null"]},
+        //         //         {"name":"favorite_color","type":["string","null"]}
+        //         //     ]
+        //         // });
+        //         // console.log(type);
+        //         // console.log(type.fromBuffer(data));
+        //         console.log(avsc.Type)
+        //     },
+        //     error:function (errText) {
+        //         console.log(errText)
+        //     }
+        // })
+    </script>
+</body>
+</html>

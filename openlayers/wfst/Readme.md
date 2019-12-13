@@ -1,0 +1,1 @@
+使用geoserver+openlayer+PostGIS实现的图形的修改。

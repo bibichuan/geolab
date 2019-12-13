@@ -1,0 +1,94 @@
+server:
+  port: 8068
+  compression:
+    enabled: true
+    mime-types: application/json
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  redis:
+    host: 127.0.0.1
+    #Redis服务器连接端口
+    port: 6379
+    #Redis数据库索引（默认为0）
+    database: 0
+    jedis:
+      pool:
+        #连接池最大连接数（使用负值表示没有限制）
+        max-active: 50
+        #连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: 3000
+        #连接池中的最大空闲连接
+        max-idle: 20
+        #连接池中的最小空闲连接
+        min-idle: 2
+    #连接超时时间（毫秒）
+    timeout: 5000
+  datasource:
+    ## default connection pool
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+      username: PhEmsPh_lshlrd
+      password: YL-al*6`6
+    url: jdbc:sqlserver://120.199.181.229;databasename=ztzn
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      use-new-id-generator-mappings: false
+    properties:
+      hibernate:
+        temp.use_jdbc_metadata_defaults: fase
+    database-platform: org.hibernate.dialect.SQLServer2005Dialect
+    show-sql: true
+#mybatis:
+#  configuration:
+#    map-underscore-to-camel-case: true
+#  type-aliases-package: com.proheng.gis.Entity
+#  mapper-locations: classpath:mapper/*.xml
+
+## 日志文件路径
+logfilepath: "D:\\zlc\\hlgy\\PhGIShlServer\\log"
+
+## 设置管线数据的缓存时间,单位为秒
+pipelineTimeData:
+  timeout: 30
+
+#weixin:
+#  app_id: "wx5db243183992f419"
+#  app_secret: "b6e33e45f851464098e59541f2e3b303"
+
+## 测试号微信
+weixin:
+  app_id: "wx9dfa1d94ada17d1f"
+  app_secret: "219951c632d89dc3a8a1d4b8e0c48763"
+
+urlconfig:
+    baseUrl: ""
+    staticUrl: "./static"
+
+    pipeline: "http://120.27.147.231:8080/geoserver/proheng/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=proheng:pipeline&outputFormat=application/json&srsname=EPSG:4326&"
+#    pipelineConfig: ""
+    pipelineTimeData: "http://183.247.164.18:9980/CalcPipeInstant"
+    pipelineTimeDataBackups: "http://ecs1.proheng.net:9980/CalcPipeInstant"
+
+    station: "http://120.27.147.231:8080/geoserver/proheng/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=proheng%3Astation&maxFeatures=50&outputFormat=application%2Fjson"
+
+    stationConfig: "http://cloud.proheng.net/public/static/js/gis/gis_station.json"
+
+    stationTimeData: "http://www.proheng.net:8014/model/indexshow/GetDataListForMap.php"
+    factory: "http://120.27.147.231:8080/geoserver/proheng/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=proheng:factory&outputFormat=application/json&srsname=EPSG:4326&"
+
+    getUserFreeSetting: "http://cloud.proheng.net/getUserFreeSetting"
+    setUserFreeSetting: "http://cloud.proheng.net/setUserFreeSetting"
+
+    drawConfig: "./static/js/gis/gis_draw.json"
+
+    getSimulationValue: "http://114.55.38.32:9980/CalcPipeInput"
+
+    getDbList: "http://cloud.proheng.net/databases/getDbList"

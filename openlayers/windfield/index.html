@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>风场测试</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../lib/ol/ol.css" type="text/css">
+    <script src="../lib/ol/ol.js"></script>
+    <script  src="https://code.jquery.com/jquery-3.4.1.min.js"  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <style>
+        body,html{
+            width:100%;
+            margin:0;
+            padding:0;
+            height: 100%;
+            position:absolute;
+        }
+        .map{
+            width:100%;
+            height:100%;
+            position:absolute;
+        }
+        .save{
+            position: absolute;
+            left: 200px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" style="position: absolute; z-index: 10; pointer-events: none;"></canvas>
+    <div class="map" id="map"></div>
+    <script>
+        var myView={
+            modalSelect:'gfs'
+        }
+        var asideVue={
+            projection: "EPSG:3857"
+        }
+    </script>
+    <script src="./js/wind.js"></script>
+    <script>
+        var DARK_BLUE = new ol.source.XYZ({
+            url: "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}"
+        });
+
+        var basicMap = new ol.layer.Tile({source: DARK_BLUE});
+        var projection = "EPSG:3857"; // "EPSG:3857"; //"EPSG:10035";
+        var center = new ol.proj.fromLonLat([110, 24], projection);
+        var mapExtent = ol.proj.transformExtent([-180, -85, 180, 85],'EPSG:4326', projection);
+        var monitorMap = new ol.Map({
+            controls: ol.control.defaults({
+                attributionOptions:
+                    ({
+                        collapsible: false
+                    })
+            }),
+            layers:[basicMap],
+            target: 'map',
+            view: new ol.View({
+                projection: projection,
+                center: center,
+                extent: mapExtent,
+                zoom: 4,
+                maxZoom: 15,
+                minZoom: 3,
+            })
+        });
+        var display = new MotionDisplay(document.getElementById('canvas'), new VectorField([[]], -179.5, 89.5, 179.5, -89.5));
+        // display.start();
+        
+        //var utcNow =new Date( myView.datetime.getTime())
+        //utcNow.setHours(myView.time)
+        //utcNow = new Date(utcNow.getTime()-8*60*60*1000)
+        var imguv = new Image();
+        imguv.crossOrigin = "anonymous";
+        imguv.src="./img/06.jpg"
+        //imguv.src =myView.dataSource+"/GFS/win/"+utcNow.Format("yyyy/MM/dd/hh")+".jpg"; // "http://www.meteowise.msns.cn:28083/GFS/win/2017/05/01/01.jpg";//"getImageForecastData?path="+utcNow.Format("yyyy/MM/dd")+"/icon/whole_world/hour_"+utcNow.Format("hh")+"/icon_vitr_u_10_m_"+utcNow.Format("yyyyMMdd_hh")+".jpg"
+
+        imguv.onerror= function(){
+            if(myView.modalSelect==="gfs"){
+                myView.$Notice.error({ title: '未找到该时次数据',desc:"可能是时间超出范围，也有可能是网络错误"})
+            }
+        };
+        var winspeed = [];
+        imguv.onload = function() {
+            var canvas = document.createElement('canvas');
+            canvas.width = this.width;
+            canvas.height = this.height;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(this, 0, 0);
+            var imageData = ctx.getImageData(0, 0, this.width, this.height).data;
+            var field = VectorField.readImgArr(imageData);
+            for (var i = 0; i < 720; i++) {
+                for (var j = 0; j < 360; j++) {
+                    var vector = field.field[i][j];
+                    var speed = Math.sqrt (Math.pow(vector.x,2)+Math.pow(vector.y,2));
+                    winspeed[(j*720+i)*4] = speed;
+                    winspeed[(j*720+i)*4+1] = speed;
+                    winspeed[(j*720+i)*4+2] = speed;
+                    winspeed[(j*720+i)*4+3] = speed
+                }
+            }
+            // canvasLayer.setSource(new ol.source.ImageCanvas({
+            // 	canvasFunction : canvasFunction,
+            // 	ratio : 1,
+            // 	projection : "epsg:3857"
+            // }))
+            display.field = field;
+            console.log(display);
+            if (display.first) {
+                display.start();
+                monitorMap.on('movestart', function(){
+                    display.state ="startMove";
+                    });
+                monitorMap.on('moveend', function() {
+                    display.state ="animate";
+                });
+                //monitorMap.on('pointermove',pointmove)
+                display.first=false;
+            }
+            setTimeout(function() {
+                display.state ="animate"
+            }, 100);
+        };
+    </script>
+</body>
+</html>

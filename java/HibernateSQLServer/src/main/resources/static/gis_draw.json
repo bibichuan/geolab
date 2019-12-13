@@ -1,0 +1,106 @@
+[{
+  "id": 0,
+  "itemName": "Tempe",
+  "name": "温度",
+  "isChecked": true,
+  "colorPiece":2,
+  "colorBlock": [{
+    "colorSection": 20,
+    "upperValue": 300,
+    "colorType":0,
+    "lowerValue": 200
+  },{
+    "colorSection": 20,
+    "upperValue": 100,
+    "colorType":0,
+    "lowerValue": 0
+  }]
+},{
+  "id": 1,
+  "itemName": "Press",
+  "name": "压力",
+  "colorPiece":2,
+  "isChecked": false,
+  "colorBlock": [{
+    "colorSection": 20,
+    "upperValue": 1.0,
+    "colorType":1,
+    "lowerValue": 0.2
+  },{
+    "colorSection": 20,
+    "upperValue": 0,
+    "colorType":0,
+    "lowerValue": -100
+  }]
+},{
+  "id": 2,
+  "itemName": "OverHeat",
+  "colorPiece":2,
+  "name": "过热度",
+  "isChecked": false,
+  "colorBlock": [{
+    "colorSection": 20,
+    "upperValue": 300,
+    "colorType":0,
+    "lowerValue": 0
+  },{
+    "colorSection": 20,
+    "upperValue": 0,
+    "colorType":0,
+    "lowerValue": -100
+  }]
+},{
+  "id": 2,
+  "itemName": "Speed",
+  "colorPiece":2,
+  "name": "流速",
+  "isChecked": false,
+  "colorBlock": [{
+    "colorSection": 20,
+    "upperValue": 300,
+    "colorType":0,
+    "lowerValue": 0
+  },{
+    "colorSection": 20,
+    "upperValue": 0,
+    "colorType":0,
+    "lowerValue": -100
+  }]
+},
+  {
+    "id": 2,
+    "itemName": "Density",
+    "colorPiece":2,
+    "name": "密度",
+    "isChecked": false,
+    "colorBlock": [{
+      "colorSection": 20,
+      "upperValue": 300,
+      "colorType":0,
+      "lowerValue": 0
+    },{
+      "colorSection": 20,
+      "upperValue": 0,
+      "colorType":0,
+      "lowerValue": -100
+    }]
+  },
+  {
+    "id": 2,
+    "itemName": "Enthalpy",
+    "colorPiece":2,
+    "name": "焓值",
+    "isChecked": false,
+    "colorBlock": [{
+      "colorSection": 20,
+      "upperValue": 300,
+      "colorType":0,
+      "lowerValue": 0
+    },{
+      "colorSection": 20,
+      "upperValue": 0,
+      "colorType":0,
+      "lowerValue": -100
+    }]
+  }
+]
