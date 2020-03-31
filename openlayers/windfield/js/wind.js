@@ -84,11 +84,11 @@ VectorField.read = function(data) {
 			var vx = data[0].data[w*y+x];
 			var vy = data[1].data[w*y+x];
 			var v = new Vector(vx, vy);
-			var ux = x / (w - 1);
+			var ux = x / (w - 1); // 计算格网点所在位置比率
 			var uy = y / (h - 1);
-			var lon =  data[0].header.lo1 * (1 - ux) + data[0].header.lo2 * ux;
-			var lat =  data[0].header.la1 * (1 - uy) + data[0].header.la2 * uy;
-			var m = Math.PI * lat / 180;
+			var lon =  data[0].header.lo1 * (1 - ux) + data[0].header.lo2 * ux; // 计算向量点的经度
+			var lat =  data[0].header.la1 * (1 - uy) + data[0].header.la2 * uy; // 计算向量点的纬度
+			var m = Math.PI * lat / 180; // 将向量点的纬度转为弧度
 			var length = v.length();
 			if (length) {
 			    total += length * m;
@@ -135,7 +135,7 @@ VectorField.readImg = function(datau,datav) {
 				if (length) {
 				    total += length * m;
 				    weight += m;
-		    	}
+				}
 				v.x /= Math.cos(m);
 				v.setLength(length);
 				field[x].push(v);
@@ -154,6 +154,7 @@ VectorField.readImg = function(datau,datav) {
 };
 
 VectorField.readImgArr = function(imageArr) {
+		console.log(imageArr);
 		var field = [];
 		var w = 720;
 		var h = 360;
@@ -177,12 +178,17 @@ VectorField.readImgArr = function(imageArr) {
 				if (length) {
 				    total += length * m;
 				    weight += m;
-		    	}
+				}
+
+				if(x==0){
+					console.log(m,lat,lon,v.x,v.y,v.x /Math.cos(m),v.y);
+				}
 				v.x /= Math.cos(m);
 				v.setLength(length);
 				field[x].push(v);
 			}
 		}
+		console.log(field);
 		var result = new VectorField(field, -179.5, 89.5, 179.5, -89.5);
 	  // window.console.log('total = ' + total);
 		// window.console.log('weight = ' + weight);
