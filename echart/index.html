@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>echarts</title>
+
+    <script src="./lib/jquery-3.3.1.min.js"></script>
+    <style>
+        html,body{
+            margin:0;
+            padding:0;
+            background-color:#f2f2f2;
+            height:100%;
+            overflow:hidden;
+        }
+        .line_aqi{
+            width:500px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+<!--图表-->
+<div id="line_aqi" class="line_aqi"></div>
+</body>
+<script type="text/javascript" src="./lib/echarts.min.js"></script>
+<script>
+    var myChart = echarts.init(document.getElementById("line_aqi"));
+        // 折线图
+        $.get('./data/aqi-beijing.json', function (data) {
+            myChart.setOption(option = {
+                title: {
+                    text: '历史曲线'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                xAxis: {
+                    data: data.map(function (item) {
+                        return item[0];
+                    })
+                },
+                yAxis: {
+                    splitLine: {
+                        show: false
+                    }
+                },
+                toolbox: {
+                    left: 'center',
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                dataZoom: [{
+                    startValue: '2016-06-01'
+                }, {
+                    type: 'inside'
+                }],
+                visualMap: {
+                    top: 10,
+                    right: 10,
+                    pieces: [{
+                        gt: 0,
+                        lte: 50,
+                        color: '#096'
+                    }, {
+                        gt: 50,
+                        lte: 100,
+                        color: '#ffde33'
+                    }, {
+                        gt: 100,
+                        lte: 150,
+                        color: '#ff9933'
+                    }, {
+                        gt: 150,
+                        lte: 200,
+                        color: '#cc0033'
+                    }, {
+                        gt: 200,
+                        lte: 300,
+                        color: '#660099'
+                    }, {
+                        gt: 300,
+                        color: '#ffffff'
+                    }],
+                    outOfRange: {
+                        color: '#999'
+                    }
+                },
+                series: {
+                    name: 'Beijing AQI',
+                    type: 'line',
+                    data: data.map(function (item) {
+                        return item[1];
+                    }),
+                    markLine: {
+                        silent: true,
+                        data: [{
+                            yAxis: 50
+                        }, {
+                            yAxis: 100
+                        }, {
+                            yAxis: 150
+                        }, {
+                            yAxis: 200
+                        }, {
+                            yAxis: 300
+                        }]
+                    }
+                }
+            });
+        });
+</script>
+</html>
