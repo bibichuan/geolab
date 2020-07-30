@@ -227,16 +227,12 @@ GIS={
         try {
             var objList=this.objList;
             var count=objList.length;
-            console.log(count);
             for(var i=count-1;i>=0;i--){
-                console.log("ddd");
                 var id = objList[i].id;
                 var style = objList[i].style;
                 var cell = objList[i].cell;
                 var key = objList[i].key;
                 var qKey = key;
-
-                console.log(id);
 
                 if(id ==7){
                     console.log(cell);
@@ -276,6 +272,13 @@ GIS={
     doc = req.getDocumentElement().ownerDocument;
     var codec = new mxCodec(doc);
     codec.decode(doc.documentElement, graph.getModel());
+
+    // graph自适应
+    graph.fit();
+    graph.center(true,true,0.5,0.5);//将画布放到容器中间
+    var sc = graph.getView().getScale();//获取当前的缩放比例
+    graph.zoomTo(sc/1.2);//在进行缩放，否则是满屏状态，不好看
+
 
     // 初始化节点列表,对当前绘图中的全部节点进行存储，便于操作
     GIS.initObjList();
