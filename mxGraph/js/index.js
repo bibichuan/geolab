@@ -104,6 +104,7 @@
 
 GIS={
     objList:null, // 流程图对象列表
+    graph:null, // 绘图对象
     initMxGraph:function(id){ // 初始化应用程序
         // 检查浏览器是否支持 
         if (!mxClient.isBrowserSupported())
@@ -115,7 +116,7 @@ GIS={
         var container=document.getElementById(id);
 
         var model = new mxGraphModel();
-        var graph = new mxGraph(container, model);
+        var graph =this.graph= new mxGraph(container, model);
     
         // 渲染的时候使用html标签
         graph.setHtmlLabels(true);
@@ -194,9 +195,60 @@ GIS={
 
         // 返回绘图对象
         return graph;
-    },
-    refresh:function(data){
+    }
+    // 初始化对象列表
+    ,initObjList:function() {
+        var objList=this.objList = new Array();
+        var graph=this.graph;
+        if (doc != null && doc.documentElement != null) {
+            var model = graph.getModel();
+            var nodes = doc.documentElement.getElementsByTagName('mxCell');
+            if (nodes != null && nodes.length > 0) {
+                for (var i = 0; i < nodes.length; i++) {
+                    // Processes the activity nodes inside the process node
+                    var id = nodes[i].getAttribute('id');
+                    var style = nodes[i].getAttribute('style');
+                    if (null != style) {
+                        var obj = new Object()
+                        obj.id = id;
+                        obj.style = style;
+                        obj.cell = model.getCell(id);
+                        obj.key = model.getCell(id).value;
+                        objList.push(obj);
+                    }
+                }
+            }
+        }
+    }
+    // 根据数据，遍历节点进行相应的更新
+    ,refresh:function(data){
+        var model = this.graph.getModel();
+        model.beginUpdate();
+        try {
+            var objList=this.objList;
+            var count=objList.length;
+            console.log(count);
+            for(var i=count-1;i>=0;i--){
+                console.log("ddd");
+                var id = objList[i].id;
+                var style = objList[i].style;
+                var cell = objList[i].cell;
+                var key = objList[i].key;
+                var qKey = key;
 
+                console.log(id);
+
+                if(id ==7){
+                    console.log(cell);
+                    cell.value="10000"
+                    model.setStyle(cell, style);
+                    this.graph.refresh();
+                }
+            }
+        }catch(err){
+            this.graph.refresh();
+            model.endUpdate();
+        }
     },
     
 };
@@ -219,11 +271,16 @@ GIS={
     // 加载预定义图形
     mxStencilRegistry.loadStencilSet('./xml/general.xml');  //STENCIL_PATH = stencils
 
-
     // 加载数据
     var req = mxUtils.load('./xml/xiasha.xml');   //XML_PATH = xml
     doc = req.getDocumentElement().ownerDocument;
     var codec = new mxCodec(doc);
     codec.decode(doc.documentElement, graph.getModel());
+
+    // 初始化节点列表,对当前绘图中的全部节点进行存储，便于操作
+    GIS.initObjList();
+
+    // 测试数据更新
+    GIS.refresh();
     
 })()
