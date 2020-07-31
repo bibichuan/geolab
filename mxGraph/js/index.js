@@ -223,6 +223,7 @@ GIS={
     // 根据数据，遍历节点进行相应的更新
     ,refresh:function(data){
         var model = this.graph.getModel();
+        var graph=this.graph;
         model.beginUpdate();
         try {
             var objList=this.objList;
@@ -238,11 +239,12 @@ GIS={
                     console.log(cell);
                     cell.value="10000"
                     model.setStyle(cell, style);
-                    this.graph.refresh();
                 }
             }
         }catch(err){
-            this.graph.refresh();
+            console.log(err);
+        }finally{
+            graph.refresh();
             model.endUpdate();
         }
     },
