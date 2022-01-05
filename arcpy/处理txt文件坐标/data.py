@@ -3,9 +3,10 @@
 import os
 
 
-workspace="/mnt/bibichuan/三年预审/三年预审"
-dataspace=workspace+"/19年(2)"
-# dataspace=workspace+"/20年(3)"
+# workspace="/mnt/bibichuan/三年预审/三年预审"
+workspace="/Users/bibichuan/bibichuan/projects/三年预审/三年预审"
+# dataspace=workspace+"/19年(2)"
+dataspace=workspace+"/20年(3)"
 # dataspace=workspace+"/21年(3)"
 
 ## 递归遍历文件及其文件夹
