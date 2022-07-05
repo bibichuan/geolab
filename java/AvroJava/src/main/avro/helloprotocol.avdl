@@ -1,9 +1,0 @@
-@namespace("com.proheng.protocol")
-protocol HelloProtocol {
-	import schema "user.avsc";
-	record Message {
-	  string id;
-	  string msg;
-	}
-	string hello(com.proheng.User user);
-}

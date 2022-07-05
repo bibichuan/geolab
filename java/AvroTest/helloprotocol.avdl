@@ -1,9 +1,0 @@
-@namespace("com.example.protocol")
-protocol HelloProtocol {
-	import schema "user.avsc";
-	record Message {
-	  string id;
-	  string msg;
-	}
-	string hello(com.example.User user);
-}
